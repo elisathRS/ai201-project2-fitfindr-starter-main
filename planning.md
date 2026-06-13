@@ -94,9 +94,9 @@ For each tool, describe the specific failure mode you're handling and what the a
 
 | Tool | Failure mode | Agent response |
 |------|-------------|----------------|
-| search_listings | No results match the query | |
-| suggest_outfit | Wardrobe is empty | |
-| create_fit_card | Outfit input is missing or incomplete | |
+| `search_listings` | No results match the query (returns an empty list `[]`). | **Stops execution immediately (Return Early).** The agent bypasses all subsequent tools and generates a helpful response advising the user to broaden their search by adjusting keywords, increasing the budget, or removing the size filter. |
+| `suggest_outfit` | Wardrobe is empty or its `'items'` key contains no clothing pieces. | **Graceful Fallback.** Instead of failing or raising an exception, the agent routes the request to the LLM with a specialized prompt to generate general styling advice, outfit vibes, and generic pairing ideas for the selected item. |
+| `create_fit_card` | Outfit input is missing, empty, or consists only of whitespace due to an upstream issue. | **Guard Clause Enforcement.** The agent catches the empty string and prevents an unnecessary or broken LLM call. It appends a descriptive error message regarding the missing styling inside the final output layout without crashing the application state. |
 
 ---
 
