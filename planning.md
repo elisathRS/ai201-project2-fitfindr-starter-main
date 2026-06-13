@@ -110,7 +110,6 @@ For each tool, describe the specific failure mode you're handling and what the a
      ASCII art, a Mermaid diagram (https://mermaid.js.org/syntax/flowchart.html), or an embedded
      sketch are all fine. You'll share this diagram with an AI tool when asking it to implement
      the planning loop and each individual tool. -->
-## Architecture
 
 This diagram illustrates the sequential execution pipeline of the FitFindr agent, detailing data flow payloads, state updates within the session, and early termination guard clauses.
 
