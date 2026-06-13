@@ -73,7 +73,11 @@ No additional tools are required for Milestone 1.
 ## Planning Loop
 
 **How does your agent decide which tool to call next?**
-<!-- Describe the logic your planning loop uses. What does it look at? What conditions change its behavior? How does it know when it's done? -->
+FitFindr determines its next action through a strict, sequential decision-making process driven by data validation guards rather than an open-ended reactive loop. The agent begins the workflow by extracting the user's search criteria—such as description, size, and maximum price—and immediately invoking `search_listings()`. To decide whether to proceed or stop, the agent evaluates the structural outcome of this search; if the returned list is completely empty, a conditional branch is triggered where the agent stops the workflow early and generates a message advising the user to broaden their search parameters. Conversely, if the list contains one or more results, the agent locks in the highest-ranked item as `selected_item = results[0]` and advances to the next logical step.
+
+Once the item is selected, the behavior of the agent is guided by the evaluation of content validity. It automatically retrieves the user's wardrobe data and executes `suggest_outfit(selected_item, wardrobe)`, pausing to verify the string response of the tool. If the outfit suggestion is empty or consists of only whitespace, the agent recognizes a generation failure and routes directly to the end of the pipeline, skipping the captioning phase entirely to avoid further errors. If a valid, non-empty suggestion is returned, the agent moves forward with its final enrichment task by calling `create_fit_card(outfit_suggestion, selected_item)` to produce a social-media caption.
+
+The agent knows the planning loop is complete when all executed tool outputs converge into a finalized response structure. Whether `create_fit_card()` succeeds or gracefully returns a descriptive error message due to upstream issues, the agent aggregates the available data—the listing details, the outfit recommendation, and the resulting caption or error text—into a single, unified Markdown payload for the user, marking the execution cycle as fully done.
 
 ---
 
