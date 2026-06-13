@@ -84,7 +84,7 @@ The agent knows the planning loop is complete when all executed tool outputs con
 ## State Management
 
 **How does information from one tool get passed to the next?**
-<!-- Describe how your agent stores and accesses state within a session. What data is tracked? How is it passed between tool calls? -->
+FitFindr stores all intermediate values in a central session dictionary. The agent records parsed query metadata in `session["parsed"]`, then saves the search results list in `session["search_results"]`. The top match becomes `session["selected_item"]`, which is passed into `suggest_outfit()` along with the wardrobe. The returned styling text is stored in `session["outfit_suggestion"]` and then passed to `create_fit_card()` with the same selected item. The final caption is saved in `session["fit_card"]`. If any early termination condition occurs, `session["error"]` is set and the agent returns immediately without calling the later tools.
 
 ---
 
