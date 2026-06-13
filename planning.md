@@ -154,6 +154,7 @@ graph TD
     
     %% Final Convergence
     State_Caption -->|10. Aggregate all payload data| Terminal
+```
 
 ---
 
