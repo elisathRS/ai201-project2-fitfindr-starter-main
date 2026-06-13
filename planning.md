@@ -110,6 +110,50 @@ For each tool, describe the specific failure mode you're handling and what the a
      ASCII art, a Mermaid diagram (https://mermaid.js.org/syntax/flowchart.html), or an embedded
      sketch are all fine. You'll share this diagram with an AI tool when asking it to implement
      the planning loop and each individual tool. -->
+## Architecture
+
+This diagram illustrates the sequential execution pipeline of the FitFindr agent, detailing data flow payloads, state updates within the session, and early termination guard clauses.
+
+```mermaid
+graph TD
+    %% Nodes Definition
+    User([User Prompt])
+    Loop[Planning Loop / Agent Core]
+    SearchTool{{search_listings}}
+    OutfitTool{{suggest_outfit}}
+    CaptionTool{{create_fit_card}}
+    
+    subgraph Session State
+        State_Item[selected_item]
+        State_Outfit[outfit_suggestion]
+        State_Caption[fit_card]
+    end
+
+    Terminal[Return Final Response / Early Exit]
+
+    %% Data Flow Pipeline
+    User -->|1. Raw Input: criteria| Loop
+    Loop -->|2. Invoke with description, size, max_price| SearchTool
+    
+    %% Search Evaluation
+    SearchTool -->|3a. If no results found| Terminal
+    style Terminal stroke:#f66,stroke-width:2px
+    
+    SearchTool -->|3b. If results have items| State_Item
+    State_Item -->|4. Set selected_item to first result| Loop
+    
+    %% Outfit Evaluation
+    Loop -->|5. Invoke with selected_item & wardrobe| OutfitTool
+    OutfitTool -->|6. Return outfit string| State_Outfit
+    
+    %% Caption & Synthesis
+    State_Outfit -->|7. If empty string| Terminal
+    State_Outfit -->|7. If valid string| Loop
+    Loop -->|8. Invoke with outfit_suggestion & selected_item| CaptionTool
+    CaptionTool -->|9. Return caption OR fallback error string| State_Caption
+    
+    %% Final Convergence
+    State_Caption -->|10. Aggregate all payload data| Terminal
 
 ---
 
