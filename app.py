@@ -32,19 +32,55 @@ def handle_query(user_query: str, wardrobe_choice: str) -> tuple[str, str, str]:
         A tuple of three strings:
             (listing_text, outfit_suggestion, fit_card)
         Each string maps to one of the three output panels in the UI.
-
-    TODO:
-        1. Guard against an empty query (return early with an error message).
-        2. Select the wardrobe based on wardrobe_choice.
-        3. Call run_agent() with the query and selected wardrobe.
-        4. If session["error"] is set, return the error in the first panel
-           and empty strings for the other two.
-        5. Otherwise, format session["selected_item"] into a readable listing_text
-           string and return it along with session["outfit_suggestion"] and
-           session["fit_card"].
     """
-    # TODO: implement this function
-    return "Agent not yet implemented.", "", ""
+    if not user_query or not user_query.strip():
+        return (
+            "Please enter a search query so FitFindr can look for items.",
+            "",
+            "",
+        )
+
+    if wardrobe_choice == "Example wardrobe":
+        wardrobe = get_example_wardrobe()
+    else:
+        wardrobe = get_empty_wardrobe()
+
+    session = run_agent(user_query, wardrobe)
+
+    if session.get("error"):
+        return (session["error"], "", "")
+
+    selected_item = session.get("selected_item")
+    if not selected_item:
+        return (
+            "No listing was selected. Please try a different query.",
+            "",
+            "",
+        )
+
+    title = selected_item.get("title", "Unknown listing")
+    price = selected_item.get("price")
+    platform = selected_item.get("platform", "unknown platform")
+    condition = selected_item.get("condition", "unknown condition")
+    size = selected_item.get("size")
+    category = selected_item.get("category")
+
+    listing_text = f"{title}"
+    if price is not None:
+        listing_text += f" — ${price:.2f}"
+    if platform:
+        listing_text += f", {platform}"
+    if category:
+        listing_text += f" ({category})"
+    if size:
+        listing_text += f" — Size: {size}"
+    if condition:
+        listing_text += f" — Condition: {condition}"
+
+    outfit_text = session.get("outfit_suggestion") or ""
+    fit_card_text = session.get("fit_card") or ""
+
+    return (listing_text, outfit_text, fit_card_text)
 
 
 # ── interface ─────────────────────────────────────────────────────────────────
