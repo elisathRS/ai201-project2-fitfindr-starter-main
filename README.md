@@ -157,9 +157,9 @@ The generated code had the session dict and sequential tool calls but was missin
 
 ---
 
-  ## Demo Video 
+## Demo Video 
 
-     [Watch the video](https://www.loom.com/share/1a857fd78a6049b4bba1b4a705a2160b)
+   [Watch the video](https://www.loom.com/share/1a857fd78a6049b4bba1b4a705a2160b)
 
 ---
 ## Project Structure
